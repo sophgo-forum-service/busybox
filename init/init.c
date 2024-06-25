@@ -233,6 +233,10 @@ static void message(int where, const char *fmt, ...)
 	__attribute__ ((format(printf, 2, 3)));
 static void message(int where, const char *fmt, ...)
 {
+#ifdef __CVITEK_FASTBOOT__
+	return ;
+#endif
+
 	va_list arguments;
 	unsigned l;
 	char msg[128];
@@ -676,6 +680,25 @@ static void parse_inittab(void)
 	if (parser == NULL)
 #endif
 	{
+#ifdef __CVITEK_FASTBOOT__
+		new_init_action(SYSINIT, "/etc/init.d/fastboot start", "");
+		new_init_action(SYSINIT, "/bin/mount -t proc proc /proc", "");
+		new_init_action(SYSINIT, "/bin/mount -t tmpfs -o mode=1777 none /tmp", "");
+		new_init_action(SYSINIT, "/sbin/mdev -s", "");
+		new_init_action(SYSINIT, "/etc/init.d/rcS", "");
+		new_init_action(SYSINIT, "/bin/hostname -F /etc/hostname", "/dev/null");
+		new_init_action(SYSINIT, "/etc/init.d/rcP", "");
+
+		new_init_action(RESPAWN, "/sbin/getty -L  console 115200 vt100 -n -l /usr/local/bin/autologin", "/dev/console");
+		/* Reboot on Ctrl-Alt-Del */
+		new_init_action(CTRLALTDEL, "reboot", "");
+
+		new_init_action(SHUTDOWN, "/etc/init.d/rcK", "");
+		/* Swapoff on halt/reboot */
+		new_init_action(SHUTDOWN, "swapoff -a", "");
+		/* Umount all filesystems on halt/reboot */
+		new_init_action(SHUTDOWN, "umount -a -r", "");
+#else
 		/* No inittab file - set up some default behavior */
 		/* Sysinit */
 		new_init_action(SYSINIT, INIT_SCRIPT, "");
@@ -693,6 +716,7 @@ static void parse_inittab(void)
 		new_init_action(SHUTDOWN, "swapoff -a", "");
 		/* Restart init when a QUIT is received */
 		new_init_action(RESTART, "init", "");
+#endif
 		return;
 	}
 

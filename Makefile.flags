@@ -17,6 +17,10 @@ CPPFLAGS += \
 	$(if $(CONFIG_LFS),-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64) \
 	-DBB_VER=$(squote)$(quote)$(BB_VER)$(quote)$(squote)
 
+ifeq ($(ENABLE_FASTBOOT),y)
+CFLAGS += $(call cc-option,-D__CVITEK_FASTBOOT__,)
+endif
+
 CFLAGS += $(call cc-option,-Wall,)
 CFLAGS += $(call cc-option,-Wshadow,)
 CFLAGS += $(call cc-option,-Wwrite-strings,)

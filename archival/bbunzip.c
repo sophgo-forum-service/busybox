@@ -9,6 +9,11 @@
 //kbuild:lib-$(CONFIG_BZCAT) += bbunzip.o
 //kbuild:lib-$(CONFIG_BUNZIP2) += bbunzip.o
 
+//kbuild:lib-$(CONFIG_ZCAT) += bbunzip.o
+//kbuild:lib-$(CONFIG_GUNZIP) += bbunzip.o
+//kbuild:lib-$(CONFIG_BZCAT) += bbunzip.o
+//kbuild:lib-$(CONFIG_BUNZIP2) += bbunzip.o
+
 /* lzop_main() uses bbunpack(), need this: */
 //kbuild:lib-$(CONFIG_LZOP) += bbunzip.o
 //kbuild:lib-$(CONFIG_LZOPCAT) += bbunzip.o
